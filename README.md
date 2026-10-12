@@ -1,33 +1,38 @@
-# Xteink X3 fridge-magnet case
+# Xteink X3 fridge-magnet case (v2)
 
-A printable snap-fit, open-frame case that turns an Xteink X3 into a fridge/door ticker. Six N52
-10 x 3 mm neodymium disc magnets sit hidden behind a 0.6 mm skin on the back.
+A printable open-frame case that turns an Xteink X3 into a fridge/door ticker. **Six N52 10 x 3 mm
+neodymium disc magnets snap into pockets on the back, no glue needed**, hidden behind a 0.6 mm skin.
 
 ![front](images/front.png) ![back](images/back.png)
 
 ## Files
 - `x3_case.scad` - parametric OpenSCAD source (edit the values at the top)
-- `x3_case.stl` - ready to print
-- `old/` - earlier design iterations
+- `x3_case.stl` - ready to print (v2)
+- `old/` - earlier prototypes (v1 is in the git history)
+
+## What's new in v2
+- 6 magnets (2 x 3) instead of 4, N52 grade.
+- **Snap-in magnet pockets**: each pocket has three flexing tongues with ramped lips (0.4 mm overlap, 0.7 mm relief slots).
+  Press a magnet in from the cavity side and it clicks in place. The device snap-hook experiment was dropped
+  (see `old/proto_6_device_snap_hooks.scad`); the device is held by the corner lips and gravity as before.
+- Re-laid-out back: candlestick chart + "X3 TICKER", clear of the magnet rings.
 
 ## Status: untested
 Not yet test-printed or fitted to a real device. Dimensions come from the manufacturer spec
 (97.6 x 63.7 x 5.1 mm). Exact positions of the buttons and the back pogo charging contacts are
-**not verified**, so the case only touches the bottom corners and two top-corner hooks, leaving the sides, top and most of the bottom edge open.
+**not verified**, so the case only grips the corners and leaves the sides, top and most of the bottom edge open.
 The solid back plate covers the pogo contacts (slide the device out to charge).
 PRs with measurements are welcome.
 
 ## Print
-Back-down, no supports, 0.2 mm layers or finer. **PETG recommended** for the snap hooks (PLA works but is more brittle).
-Tune `clr` (clearance per side) and `snap_hook` (hook overlap) after a test fit.
+Back-down, no supports, 0.2 mm layers or finer. **PETG recommended**: the magnet catches flex about 3-4% strain
+once on insertion, which PLA may not tolerate. Tune `clr` (device clearance per side) and `catch_prot`
+(magnet catch overlap) after a test print.
 
 ## Assembly
-1. Glue the 6 N52 magnets into the back pockets from the cavity side (check polarity vs. the X3's own back magnet).
-2. Hook the X3's bottom edge under the two bottom lips, tilted slightly, then press the top edge down until the two
-   flexing hooks at the top corners click over it.
-3. To remove: spread a top hook sideways with a fingernail, or push the device out through the thumb notch from behind.
+1. Press the 6 magnets into the back pockets from the cavity side, all with the same face outward
+   (check polarity against the X3's own back magnet). They click past the lips.
+2. Slide the X3 in from the top, bottom edge first. A thumb notch at the top lets you push it out from behind.
 
-## Snap-fit details
-Two cantilever beams (1.5 mm thick, ~19 mm free length, deflection 1.0 mm, about 1% strain) are printed flat in the XY
-plane so they flex along the layer lines. Each has a ramped hook: ramp for easy press-in, flat underside to hold.
-N52 is the strongest common grade but brittle; keep it below ~60 C and don't let two magnets snap together.
+To remove a magnet, push it out from the outside by piercing the thin skin, or spread a catch with a pick.
+N52 is strong but brittle; keep it below ~60 C and don't let two magnets slam together.
