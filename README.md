@@ -1,6 +1,6 @@
 # Xteink X3 fridge-magnet case
 
-A printable snap-fit, open-frame case that turns an Xteink X3 into a fridge/door ticker. Four N52
+A printable snap-fit, open-frame case that turns an Xteink X3 into a fridge/door ticker. Six N52
 10 x 3 mm neodymium disc magnets sit hidden behind a 0.6 mm skin on the back.
 
 ![front](images/front.png) ![back](images/back.png)
@@ -22,7 +22,7 @@ Back-down, no supports, 0.2 mm layers or finer. **PETG recommended** for the sna
 Tune `clr` (clearance per side) and `snap_hook` (hook overlap) after a test fit.
 
 ## Assembly
-1. Glue the 4 N52 magnets into the back pockets from the cavity side (check polarity vs. the X3's own back magnet).
+1. Glue the 6 N52 magnets into the back pockets from the cavity side (check polarity vs. the X3's own back magnet).
 2. Hook the X3's bottom edge under the two bottom lips, tilted slightly, then press the top edge down until the two
    flexing hooks at the top corners click over it.
 3. To remove: spread a top hook sideways with a fingernail, or push the device out through the thumb notch from behind.

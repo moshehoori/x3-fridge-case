@@ -17,7 +17,7 @@ bot_win = 46;     // open width at the bottom edge (pogo / bottom keys)
 // magnets: N52 10 x 3 mm round neodymium, inserted from the cavity side before the
 // device goes in. A thin skin keeps them hidden and protects the fridge paint.
 // N52 grade 10 x 3 mm discs
-mag_d = 10.2; mag_t = 3.1; skin = 0.6; mag_x = 21; mag_dy = 17;
+mag_d = 10.2; mag_t = 3.1; skin = 0.6; mag_x = 22; mag_dy = 30; // 6 magnets: 2 columns x 3 rows
 // snap-fit: two flexing hooks at the top corners. Hook the bottom edge under the
 // bottom lips first, then press the top edge down until the hooks click over it.
 snap_t = 1.5;     // beam thickness (flexes sideways, printed flat = strong)
@@ -96,15 +96,15 @@ module border_groove() { // thin line 2.2 mm in from the back edge
   }
 }
 module mag_rings() {
-  for (sx=[-1,1], sy=[-1,1]) translate([sx*mag_x, out_h/2+sy*mag_dy, -0.01])
+  for (sx=[-1,1], sy=[-1,0,1]) translate([sx*mag_x, out_h/2+sy*mag_dy, -0.01])
     difference() { cylinder(d=mag_d+4.4, h=0.4); translate([0,0,-1]) cylinder(d=mag_d+3.4, h=3); }
 }
 
 module decoration() { // viewed from behind, so mirrored in x
   mirror([1,0,0]) translate([0, out_h/2, 0]) translate([0,0,0]) {
-    candles();
-    translate([0, -32, -0.01]) linear_extrude(0.6)
-      text("X3 TICKER", size=4.2, halign="center", valign="center", font="Liberation Sans:style=Bold");
+    scale([0.8,0.8,1]) candles();
+    translate([0, -43, -0.01]) linear_extrude(0.6)
+      text("X3 TICKER", size=3.8, halign="center", valign="center", font="Liberation Sans:style=Bold");
   }
 }
 
@@ -130,7 +130,7 @@ difference() {
   // bottom window
   translate([-bot_win/2, -1, back]) cube([bot_win, wall+1.01, cav_t]);
   // magnet pockets, open to the cavity, closed by a thin skin on the outside
-  for (sx=[-1,1], sy=[-1,1])
+  for (sx=[-1,1], sy=[-1,0,1])
     translate([sx*mag_x, out_h/2 + sy*mag_dy, skin]) cylinder(d=mag_d, h=back-skin+0.01);
   // thumb notch to push the device out from behind
   translate([0, out_h, -1]) cylinder(d=14, h=back+2);
