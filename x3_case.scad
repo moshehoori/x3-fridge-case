@@ -12,11 +12,21 @@ lip_o  = 3.0;     // how far tabs overlap the device face
 R      = 9;       // outer corner radius
 bev    = 2.0;     // outer edge fillet radius
 cav_r  = 2.0;     // cavity corner radius (device corners must be >= this)
-tab_l  = 18;      // tab length along the side
+tab_l  = 14;      // tab length along the side
 bot_win = 46;     // open width at the bottom edge (pogo / bottom keys)
-// magnets: 10 x 3 mm round neodymium, inserted from the cavity side before the
+// magnets: N52 10 x 3 mm round neodymium, inserted from the cavity side before the
 // device goes in. A thin skin keeps them hidden and protects the fridge paint.
+// N52 grade 10 x 3 mm discs
 mag_d = 10.2; mag_t = 3.1; skin = 0.6; mag_x = 21; mag_dy = 17;
+// snap-fit: two flexing hooks at the top corners. Hook the bottom edge under the
+// bottom lips first, then press the top edge down until the hooks click over it.
+snap_t = 1.5;     // beam thickness (flexes sideways, printed flat = strong)
+snap_anchor = 5;  // beam root, fixed to the back plate
+snap_free = 19;   // free (flexing) length
+snap_gap = 0.8;   // air gap under the free part of the beam
+snap_hook = 1.0;  // how far the hook overlaps the device face (= deflection)
+snap_w = 7;       // hook length along the edge
+snap_up = 6;      // hook distance below the top edge (where the rounded corner ends)
 $fn = 72;
 
 back = skin + mag_t + 0.2; // back plate: skin + magnet + 0.2 recess
@@ -24,6 +34,7 @@ cav_h = dev_h + 2*clr; cav_w = dev_w + 2*clr; cav_t = dev_t + 2*clr;
 out_h = cav_h + wall;
 out_w = cav_w + 2*wall;
 out_t = back + cav_t + lip;
+top_l = snap_anchor + snap_free;
 
 module rrect(w, h, r, t) { // rounded rect, centered x, y from 0
   translate([0, h/2, 0]) hull() for (sx=[-1,1], sy=[-1,1])
@@ -108,9 +119,14 @@ difference() {
   translate([-out_w, -1, back+cav_t-0.01]) cube([2*out_w, out_h+2, lip+1]);
   // one long side window between the bottom and top corner posts
   for (sx=[-1,1])
-    hull() for (yy=[wall+tab_l+cav_t/2, wall+cav_h-tab_l-cav_t/2])
+    hull() for (yy=[wall+tab_l+cav_t/2, out_h-top_l-cav_t/2])
       translate([sx>0 ? cav_w/2-0.01 : -cav_w/2-wall-1.01, yy, back+cav_t/2])
         rotate([0,90,0]) cylinder(d=cav_t, h=wall+1.02, $fn=32);
+  // flexing beams at the top corners: remove the outer wall skin and the gap under the free part
+  for (sx=[-1,1]) {
+    translate([sx>0 ? cav_w/2+snap_t : -cav_w/2-wall-1, out_h-top_l-0.3, back]) cube([wall-snap_t+1, top_l+1.3, out_t]);
+    translate([sx>0 ? cav_w/2-0.01 : -cav_w/2-snap_t-0.01, out_h-top_l+snap_anchor, back-0.01]) cube([snap_t+0.02, top_l, snap_gap+0.01]);
+  }
   // bottom window
   translate([-bot_win/2, -1, back]) cube([bot_win, wall+1.01, cav_t]);
   // magnet pockets, open to the cavity, closed by a thin skin on the outside
@@ -143,10 +159,18 @@ module lip_frame() {
         translate([0,0,z0+lip-0.01]) linear_extrude(0.02) win2d(bv);
       }
       translate([-bot_win/2, -5, z0-0.1]) cube([bot_win, wall+lip_o+5.5, lip+1]);
-      // no lip along the middle of the sides: side buttons stay free
-      translate([-out_w, wall+tab_l, z0-0.1]) cube([2*out_w, cav_h-2*tab_l, lip+1]);
+      // lip only along the bottom edge (tilt-in hook); sides stay free
+      translate([-out_w, wall+lip_o+1.0, z0-0.1]) cube([2*out_w, out_h, lip+1]);
     }
   }
 }
 lip_frame();
 
+// snap hooks (ramp on top for easy press-in, flat underside holds the device)
+module hook(sx) {
+  z0 = back + cav_t; xi = cav_w/2 - snap_hook; xb = cav_w/2 + snap_t;
+  mirror([sx<0 ? 1 : 0, 0, 0])
+    translate([0, out_h - snap_up, 0]) rotate([90,0,0]) linear_extrude(snap_w)
+      polygon([[xb-0.3, z0-0.2], [cav_w/2+0.3, z0-0.2], [cav_w/2+0.3, z0], [xi, z0], [xi, z0+0.5], [cav_w/2+0.2, z0+lip], [xb-0.3, z0+lip]]);
+}
+hook(1); hook(-1);
