@@ -1,36 +1,46 @@
-// Xteink X3 fridge-magnet ticker case  (v2: 6 snap-in N52 magnets)
-// Slide the device in from the top, bottom edge first. Units: mm.
-// Sides and bottom edge are open between small retaining tabs, so side buttons,
-// bottom keys and the magnetic pogo charging contacts stay reachable.
+// Xteink X3 fridge-magnet ticker case  (v2.2: 8 snap-in N52 magnets, charging recess)
+// Slide the device in from the top, bottom edge first; gravity keeps it seated on a fridge.
+// The front lips only touch the four corners, the sides are open between the corner posts
+// (side buttons), the bottom centre is open (front rocker bars) and a recessed bottom strip with a
+// small hole lets the magnetic charging plug reach the pogo contacts. Units: mm.
 // Device (manufacturer spec): 97.6 x 63.7 x 5.1
 
 dev_h = 97.6; dev_w = 63.7; dev_t = 5.1;
 clr    = 0.3;     // clearance per side - tune after a test print
 wall   = 2.2;
-lip    = 1.6;     // thickness of front tabs
-lip_o  = 3.0;     // how far tabs overlap the device face
+lip    = 1.6;     // thickness of the front corner lips
+lip_o  = 3.0;     // how far the lips overlap the device face
 R      = 9;       // outer corner radius
 bev    = 2.0;     // outer edge fillet radius
 cav_r  = 2.0;     // cavity corner radius (device corners must be >= this)
-tab_l  = 18;      // tab length along the side
+tab_l  = 18;      // length of each corner post / lip along the side
 bot_win = 52;   // open width at the bottom edge: front rocker bars span about +-21 mm
 // magnets: 10 x 3 mm round neodymium, inserted from the cavity side before the
 // device goes in. A thin skin keeps them hidden and protects the fridge paint.
-mag_d = 10.2; mag_t = 3.1; skin = 0.6; mag_x = 22; mag_dy = 30; // 2 columns x 3 rows
+mag_d = 10.2; mag_t = 3.1; skin = 0.6; mag_x = 22; mag_rows = [-24, 3, 30]; // side columns: y offsets from centre
+// 8 magnets: two side columns of 3, plus top and bottom centre (the middle is left for the chart)
+mag_pos = concat([for (sx=[-1,1], dy=mag_rows) [sx*mag_x, dy]], [[0, mag_rows[0]], [0, mag_rows[2]]]);
 // snap-in catches: 3 flexing tongues per pocket hold the magnet without glue.
 // Press the magnet in from the cavity side; the ramped lips click over its edge.
-catch_prot = 0.4;   // how far each lip overlaps the magnet edge (= tongue deflection)
+catch_prot = 0.4;   // lip reach into the pocket; overlap on a 10.0 mm magnet = 0.3 mm (= tongue deflection)
 tongue_t   = 0.8;   // tongue thickness (2 perimeters)
 slot_w     = 0.7;   // relief slot behind each tongue, lets it flex outward
 sector     = 40;    // angular width of each tongue/lip, degrees
 lip_h      = 0.8;   // lip height
 catch_extra = 1.5;  // extra tongue length above the magnet (longer tongue = lower strain)
-// charging notch: the X3's 4-pin magnetic pogo connector sits on the back, centred, about
-// 8 mm up from the bottom edge (estimated from photos of other X3 cases). The flat charging
-// plug (~21 x 10 mm, cable exits sideways) drops into this notch, which is open at the bottom
-// edge so the cable can leave downwards. The plug must be no thicker than `back` or it will
-// lift the case off the fridge.
-pogo_on = true; pogo_w = 30; pogo_h = 17;   // notch width, height from the outer bottom edge
+// charging: the X3's 4-pin magnetic pogo connector sits on the back, centred, about 8 mm up
+// from the bottom edge (estimated from photos of other X3 cases). The charging plug is stepped:
+// a thin contact nose plus a thicker body with the cable leaving sideways. Only a small hole goes
+// through for the nose; the whole bottom strip of the back, edge to edge,
+// is recessed from the fridge side, so the plug body sits flush wherever it lands and the cable
+// can leave to either side or straight down.
+// PRINT NOTE: the recess is open at the bottom and both sides, so it needs supports (build plate only).
+pogo_on   = true;
+pogo_y    = 10;     // contact centre, from the outer bottom edge
+nose_w    = 24; nose_h = 9;   // through-hole for the plug's contact nose (stadium), with tolerance
+pogo_skin = 0.8;    // plate left over the recess; the nose must reach through this
+band_h    = 17;     // recess height from the outer bottom edge
+band_w    = 120;    // recess width; wider than the case = edge to edge, open at both sides
 $fn = 72;
 
 zl = skin + mag_t + 0.15 + catch_extra;   // underside of the catch lips (magnet sits below)
@@ -57,33 +67,6 @@ module body() {
   }
 }
 
-// one front tab with a chamfered inner edge; extends past the body, which clips it
-module tab(x0, x1, y0, y1) {
-  c = 0.7;
-  z0 = back + cav_t;
-  hull() {
-    translate([x0, y0, z0 - 0.01]) cube([x1-x0, y1-y0, lip - c]);
-    translate([x0 + (x0 < 0 ? 0 : c), y0 + c, z0 - 0.01]) cube([x1-x0 - c, y1-y0 - 2*c, lip + 0.01]);
-  }
-}
-
-module tabs() {
-  yA = wall; 
-  ranges = [[wall, wall+tab_l],
-            [wall+cav_h/2-tab_l/2, wall+cav_h/2+tab_l/2],
-            [wall+cav_h-tab_l, wall+cav_h]];
-  for (sx=[-1,1], r=ranges) {
-    xin = sx*(cav_w/2 - lip_o);
-    xout = sx*(out_w/2 + 5);
-    tab(min(xin,xout), max(xin,xout), r[0], r[1]);
-  }
-  // bottom corner tabs, leaving the middle open
-  for (sx=[-1,1]) {
-    xin = sx*bot_win/2; xout = sx*(out_w/2+5);
-    tab(min(xin,xout), max(xin,xout), -5, wall + lip_o);
-  }
-}
-
 module candles() { // recessed candlestick chart, rising trend
   // [x, wick_lo, wick_hi, body_lo, body_hi]
   c = [[-12,-8,2,-5,0],[-6,-6,5,-2,3],[0,-3,4,-1,2],[6,-1,10,2,8],[12,3,15,5,13]];
@@ -100,14 +83,14 @@ module border_groove() { // thin line 2.2 mm in from the back edge
   }
 }
 module mag_rings() {
-  for (sx=[-1,1], sy=[-1,0,1]) translate([sx*mag_x, out_h/2+sy*mag_dy, -0.01])
+  for (m=mag_pos) translate([m[0], out_h/2+m[1], -0.01])
     difference() { cylinder(d=mag_d+4.4, h=0.4); translate([0,0,-1]) cylinder(d=mag_d+3.4, h=3); }
 }
 
 module decoration() { // viewed from behind, so mirrored in x
-  mirror([1,0,0]) translate([0, out_h/2, 0]) translate([0,0,0]) {
+  mirror([1,0,0]) translate([0, out_h/2, 0]) {
     scale([0.8,0.8,1]) candles();
-    translate([0, -15, -0.01]) linear_extrude(0.6)
+    translate([0, -13.5, -0.01]) linear_extrude(0.6)
       text("X3 TICKER", size=3.8, halign="center", valign="center", font="Liberation Sans:style=Bold");
   }
 }
@@ -129,27 +112,31 @@ difference() {
   // bottom window
   translate([-bot_win/2, -1, back]) cube([bot_win, wall+1.01, cav_t]);
   // magnet pockets, open to the cavity, closed by a thin skin on the outside
-  for (sx=[-1,1], sy=[-1,0,1])
-    translate([sx*mag_x, out_h/2 + sy*mag_dy, skin]) {
+  for (m=mag_pos)
+    translate([m[0], out_h/2 + m[1], skin]) {
       cylinder(d=mag_d, h=back-skin+0.01);
       // relief slots behind the three tongues
       for (a=[90,210,330]) rotate([0,0,a-sector/2-5]) rotate_extrude(angle=sector+10, $fn=72)
         translate([mag_d/2+tongue_t, 0]) square([slot_w, back-skin+0.01]);
     }
-  // charging notch, open at the bottom edge
-  if (pogo_on) translate([0, -1, -1]) hull() {
-    for (sx=[-1,1]) translate([sx*(pogo_w/2-3), pogo_h+1-3, 0]) cylinder(r=3, h=back+2);
-    translate([-pogo_w/2, 0, 0]) cube([pogo_w, 1, back+2]);
+  // charging: bottom recess from the fridge side + small through-hole for the plug nose
+  if (pogo_on) {
+    translate([0, -1, -1]) hull() {
+      for (sx=[-1,1]) translate([sx*(band_w/2-3), band_h+1-3, 0]) cylinder(r=3, h=back-pogo_skin+1);
+      translate([-band_w/2, 0, 0]) cube([band_w, 1, back-pogo_skin+1]);
+    }
+    translate([0, pogo_y, -1]) hull() for (sx=[-1,1])
+      translate([sx*(nose_w-nose_h)/2, 0, 0]) cylinder(d=nose_h, h=back+2);
   }
   // thumb notch to push the device out from behind
   translate([0, out_h, -1]) cylinder(d=14, h=back+2);
   decoration();
-  mirror([1,0,0]) translate([0,0,0]) { translate([0,0,0]) border_groove(); }
+  mirror([1,0,0]) border_groove();
   mag_rings();
 }
 
-// front bezel: one continuous U-shaped frame with rounded inner corners and a
-// beveled screen edge; open at the top (slide-in) and the bottom centre (pogo/keys)
+// front corner lips: cut from a bezel outline with rounded inner corners and a beveled
+// edge, then trimmed to the four corners (open top for slide-in, open sides and bottom centre)
 module win2d(c) { // screen window outline, grown by c; runs off the top edge
   offset(r=c) union() {
     hull() for (sx=[-1,1])
@@ -177,7 +164,7 @@ lip_frame();
 
 // snap-in lips: ramp on top for easy press-in, flat underside holds the magnet
 module mag_catches() {
-  for (sx=[-1,1], sy=[-1,0,1]) translate([sx*mag_x, out_h/2 + sy*mag_dy, skin])
+  for (m=mag_pos) translate([m[0], out_h/2 + m[1], skin])
     for (a=[90,210,330]) rotate([0,0,a-sector/2]) translate([0,0,-skin]) rotate_extrude(angle=sector, $fn=72)
       polygon([[mag_d/2+0.2, zl], [mag_d/2-catch_prot, zl], [mag_d/2-catch_prot, zl+0.25], [mag_d/2+0.2, back]]);
 }

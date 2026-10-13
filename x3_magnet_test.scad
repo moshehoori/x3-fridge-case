@@ -1,34 +1,37 @@
-// Xteink X3 fridge-magnet ticker case  (v2: 6 snap-in N52 magnets)
-// Slide the device in from the top, bottom edge first. Units: mm.
-// Sides and bottom edge are open between small retaining tabs, so side buttons,
-// bottom keys and the magnetic pogo charging contacts stay reachable.
+// Xteink X3 fridge-magnet ticker case  (v2.2: 6 snap-in N52 magnets, charging notch)
+// Slide the device in from the top, bottom edge first; gravity keeps it seated on a fridge.
+// The front lips only touch the four corners, the sides are open between the corner posts
+// (side buttons), the bottom centre is open (front rocker bars) and a notch in the back
+// plate exposes the magnetic pogo charging contacts. Units: mm.
 // Device (manufacturer spec): 97.6 x 63.7 x 5.1
 
 dev_h = 97.6; dev_w = 63.7; dev_t = 5.1;
 clr    = 0.3;     // clearance per side - tune after a test print
 wall   = 2.2;
-lip    = 1.6;     // thickness of front tabs
-lip_o  = 3.0;     // how far tabs overlap the device face
+lip    = 1.6;     // thickness of the front corner lips
+lip_o  = 3.0;     // how far the lips overlap the device face
 R      = 9;       // outer corner radius
 bev    = 2.0;     // outer edge fillet radius
 cav_r  = 2.0;     // cavity corner radius (device corners must be >= this)
-tab_l  = 18;      // tab length along the side
-bot_win = 46;     // open width at the bottom edge (pogo / bottom keys)
+tab_l  = 18;      // length of each corner post / lip along the side
+bot_win = 52;   // open width at the bottom edge: front rocker bars span about +-21 mm
 // magnets: 10 x 3 mm round neodymium, inserted from the cavity side before the
 // device goes in. A thin skin keeps them hidden and protects the fridge paint.
-mag_d = 10.2; mag_t = 3.1; skin = 0.6; mag_x = 22; mag_dy = 30; // 2 columns x 3 rows
+mag_d = 10.2; mag_t = 3.1; skin = 0.6; mag_x = 22; mag_rows = [-24, 3, 30]; // 2 columns x 3 rows (y offsets from centre; bottom row raised to clear the charging notch)
 // snap-in catches: 3 flexing tongues per pocket hold the magnet without glue.
 // Press the magnet in from the cavity side; the ramped lips click over its edge.
-catch_prot = 0.4;   // how far each lip overlaps the magnet edge (= tongue deflection)
+catch_prot = 0.4;   // lip reach into the pocket; overlap on a 10.0 mm magnet = 0.3 mm (= tongue deflection)
 tongue_t   = 0.8;   // tongue thickness (2 perimeters)
 slot_w     = 0.7;   // relief slot behind each tongue, lets it flex outward
 sector     = 40;    // angular width of each tongue/lip, degrees
 lip_h      = 0.8;   // lip height
 catch_extra = 1.5;  // extra tongue length above the magnet (longer tongue = lower strain)
-// charging window through the back plate for the magnetic pogo cable (POSITION IS A GUESS:
-// measure the contacts on your unit's back and set pogo_x / pogo_y = window centre from the
-// back's centre-line / bottom edge)
-pogo_on = true; pogo_x = 0; pogo_y = 18; pogo_w = 24; pogo_h = 14;
+// charging notch: the X3's 4-pin magnetic pogo connector sits on the back, centred, about
+// 8 mm up from the bottom edge (estimated from photos of other X3 cases). The charging plug
+// (~20 mm block + ~5 mm strain relief, ~5.5 mm thick, cable exits sideways) sits fully inside
+// this notch; the notch is open at the bottom edge so the cable can bend down and out.
+// The plug must be thinner than `back` or it will lift the case off the fridge.
+pogo_on = true; pogo_w = 36; pogo_h = 17;   // notch width, height from the outer bottom edge
 $fn = 72;
 
 zl = skin + mag_t + 0.15 + catch_extra;   // underside of the catch lips (magnet sits below)
