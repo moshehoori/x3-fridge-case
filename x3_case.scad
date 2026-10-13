@@ -1,4 +1,4 @@
-// Xteink X3 fridge-magnet ticker case  (v2.3: 8 snap-in 10x3 mm magnets, flat back, charging hole)
+// Xteink X3 fridge-magnet ticker case  (v2.4: 8 snap-in 8x3 mm magnets, flat back, charging hole, side button relief)
 // Slide the device in from the top, bottom edge first; gravity keeps it seated on a fridge.
 // The front lips only touch the four corners, the sides are open between the corner posts
 // (side buttons), the bottom centre is open (front rocker bars) and a hole in the back lets the
@@ -15,14 +15,17 @@ bev    = 2.0;     // outer edge fillet radius
 cav_r  = 2.0;     // cavity corner radius (device corners must be >= this)
 tab_l  = 18;      // length of each corner post / lip along the side
 bot_win = 52;   // open width at the bottom edge: front rocker bars span about +-21 mm
-// magnets: 10 x 3 mm round neodymium discs (any grade, N35-N52; the grade only changes strength), inserted from the cavity side before the
+// side buttons (right one about 40% down from the top) sit in the open side windows once seated;
+// these grooves keep them from being pressed while sliding past the top corner posts
+btn_relief = 0.8; btn_relief_h = 4.0;   // groove depth into the wall, groove height
+// magnets: 8 x 3 mm round neodymium discs (any grade, N35-N52; the grade only changes strength), inserted from the cavity side before the
 // device goes in. A thin skin keeps them hidden and protects the fridge paint.
-mag_d = 10.2; mag_t = 3.1; skin = 0.6; mag_x = 22; mag_rows = [-24, 3, 30]; // side columns: y offsets from centre
+mag_d = 8.2; mag_t = 3.1; skin = 0.6; mag_x = 22; mag_rows = [-24, 3, 30]; // side columns: y offsets from centre
 // 8 magnets: two side columns of 3, plus top and bottom centre (the middle is left for the chart)
 mag_pos = concat([for (sx=[-1,1], dy=mag_rows) [sx*mag_x, dy]], [[0, mag_rows[0]], [0, mag_rows[2]]]);
 // snap-in catches: 3 flexing tongues per pocket hold the magnet without glue.
 // Press the magnet in from the cavity side; the ramped lips click over its edge.
-catch_prot = 0.4;   // lip reach into the pocket; overlap on a 10.0 mm magnet = 0.3 mm (= tongue deflection)
+catch_prot = 0.4;   // lip reach into the pocket; overlap on an 8.0 mm magnet = 0.3 mm (= tongue deflection)
 tongue_t   = 0.8;   // tongue thickness (2 perimeters)
 slot_w     = 0.7;   // relief slot behind each tongue, lets it flex outward
 sector     = 40;    // angular width of each tongue/lip, degrees
@@ -102,6 +105,11 @@ difference() {
     hull() for (yy=[wall+tab_l+cav_t/2, wall+cav_h-tab_l-cav_t/2])
       translate([sx>0 ? cav_w/2-0.01 : -cav_w/2-wall-1.01, yy, back+cav_t/2])
         rotate([0,90,0]) cylinder(d=cav_t, h=wall+1.02, $fn=32);
+  // side button relief: a shallow groove in the inner wall of the top corner posts, so the side
+  // buttons slide past without being pressed while the X3 goes in from the top
+  for (sx=[-1,1])
+    translate([sx>0 ? cav_w/2-0.01 : -cav_w/2-btn_relief, wall+cav_h-tab_l-cav_t, back+(cav_t-btn_relief_h)/2])
+      cube([btn_relief+0.01, tab_l+cav_t+1, btn_relief_h]);
   // bottom window
   translate([-bot_win/2, -1, back]) cube([bot_win, wall+1.01, cav_t]);
   // magnet pockets, open to the cavity, closed by a thin skin on the outside

@@ -1,23 +1,30 @@
-# Xteink X3 fridge-magnet case (v2.3)
+# Xteink X3 fridge-magnet case (v2.4)
 
-A printable open-frame case that turns an Xteink X3 into a fridge/door ticker. **Eight 10 x 3 mm
+A printable open-frame case that turns an Xteink X3 into a fridge/door ticker. **Eight 8 x 3 mm
 neodymium disc magnets snap into pockets on the back, no glue needed**, hidden behind a 0.6 mm skin.
 
 ![front](images/front.png) ![back](images/back.png)
 
 ## Files
 - `x3_case.scad` - parametric OpenSCAD source (edit the values at the top)
-- `x3_case.stl` - ready to print (v2.3)
+- `x3_case.stl` - ready to print (v2.4)
 - `x3_magnet_test.stl` - small 2-pocket coupon: print it first to check the magnet snap fit
 - `old/` - earlier prototypes (v1 is in the git history)
 
 ## Magnets
-The pockets fit 10 mm diameter x 3 mm thick discs (pocket 10.2 x 3.1 mm). The grade (N35, N42, N52...)
-only changes strength, not size, so any 10 x 3 disc fits. N52 is the strongest common grade and is
+The pockets fit 8 mm diameter x 3 mm thick discs (pocket 8.2 x 3.1 mm). The grade (N35, N42, N52...)
+only changes strength, not size, so any 8 x 3 disc fits. N52 is the strongest common grade and is
 recommended so the 58 g X3 plus case holds well on a fridge. Check the listed size tolerance; discs
-sold as 10 x 3 are usually within +-0.1 mm.
+sold as 8 x 3 are usually within +-0.1 mm.
 
-## What's new in v2.3
+## What's new in v2.4
+- **Pockets resized for 8 x 3 mm magnets** (were 10 x 3). Same 8 positions; the test coupon is regenerated.
+  Eight N52 8 x 3 discs still hold far more than the ~100 g case plus X3. To use 10 x 3 magnets, set `mag_d = 10.2`.
+- **Side button relief**: once seated, both side buttons sit in the open side windows (nothing touches
+  them between 23 and 80 mm up the side). New 0.8 mm deep x 4 mm tall grooves in the inner wall of the two
+  top corner posts let the buttons slide past without being pressed while the X3 goes in from the top.
+
+## v2.3
 - **Flat back**: the v2.2 charging recess is gone. The 24 x 9 mm hole over the pogo connector stays and
   now goes through the full ~6.2 mm back plate. No supports needed.
 
