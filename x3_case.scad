@@ -13,7 +13,7 @@ R      = 9;       // outer corner radius
 bev    = 2.0;     // outer edge fillet radius
 cav_r  = 2.0;     // cavity corner radius (device corners must be >= this)
 tab_l  = 18;      // tab length along the side
-bot_win = 46;     // open width at the bottom edge (pogo / bottom keys)
+bot_win = 52;   // open width at the bottom edge: front rocker bars span about +-21 mm
 // magnets: 10 x 3 mm round neodymium, inserted from the cavity side before the
 // device goes in. A thin skin keeps them hidden and protects the fridge paint.
 mag_d = 10.2; mag_t = 3.1; skin = 0.6; mag_x = 22; mag_dy = 30; // 2 columns x 3 rows
@@ -24,9 +24,16 @@ tongue_t   = 0.8;   // tongue thickness (2 perimeters)
 slot_w     = 0.7;   // relief slot behind each tongue, lets it flex outward
 sector     = 40;    // angular width of each tongue/lip, degrees
 lip_h      = 0.8;   // lip height
+catch_extra = 1.5;  // extra tongue length above the magnet (longer tongue = lower strain)
+// charging notch: the X3's 4-pin magnetic pogo connector sits on the back, centred, about
+// 8 mm up from the bottom edge (estimated from photos of other X3 cases). The flat charging
+// plug (~21 x 10 mm, cable exits sideways) drops into this notch, which is open at the bottom
+// edge so the cable can leave downwards. The plug must be no thicker than `back` or it will
+// lift the case off the fridge.
+pogo_on = true; pogo_w = 30; pogo_h = 17;   // notch width, height from the outer bottom edge
 $fn = 72;
 
-zl = skin + mag_t + 0.15;   // underside of the catch lips (magnet sits below)
+zl = skin + mag_t + 0.15 + catch_extra;   // underside of the catch lips (magnet sits below)
 back = zl + lip_h;          // back plate thickness
 cav_h = dev_h + 2*clr; cav_w = dev_w + 2*clr; cav_t = dev_t + 2*clr;
 out_h = cav_h + wall;
@@ -100,7 +107,7 @@ module mag_rings() {
 module decoration() { // viewed from behind, so mirrored in x
   mirror([1,0,0]) translate([0, out_h/2, 0]) translate([0,0,0]) {
     scale([0.8,0.8,1]) candles();
-    translate([0, -43, -0.01]) linear_extrude(0.6)
+    translate([0, -15, -0.01]) linear_extrude(0.6)
       text("X3 TICKER", size=3.8, halign="center", valign="center", font="Liberation Sans:style=Bold");
   }
 }
@@ -129,6 +136,11 @@ difference() {
       for (a=[90,210,330]) rotate([0,0,a-sector/2-5]) rotate_extrude(angle=sector+10, $fn=72)
         translate([mag_d/2+tongue_t, 0]) square([slot_w, back-skin+0.01]);
     }
+  // charging notch, open at the bottom edge
+  if (pogo_on) translate([0, -1, -1]) hull() {
+    for (sx=[-1,1]) translate([sx*(pogo_w/2-3), pogo_h+1-3, 0]) cylinder(r=3, h=back+2);
+    translate([-pogo_w/2, 0, 0]) cube([pogo_w, 1, back+2]);
+  }
   // thumb notch to push the device out from behind
   translate([0, out_h, -1]) cylinder(d=14, h=back+2);
   decoration();
